@@ -1,23 +1,20 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import App from "./App";
-import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 
-const handler = http.get("https://swapi.dev/api/people/1", () => {
-  return HttpResponse.json({ name: "Luke Skywalker" });
+const response = http.get("https://swapi.dev/api/people", () => {
+  HttpResponse.json({
+    results: [{ name: "Luke Skywalker" }, { name: "Darth Vader" }],
+  });
 });
+
+const server = setupServer();
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-const server = setupServer(handler);
-
-// test("renders learn react link", () => {
-//   render(<App />);
-//   const linkElement = screen.getByText(/learn react/i);
-//   expect(linkElement).toBeInTheDocument();
-// });
 
 test("renders the heading h1", () => {
   render(<App />);
